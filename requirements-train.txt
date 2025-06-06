@@ -1,0 +1,8 @@
+# Core training dependencies for NLLB-200 fine-tuning
+torch>=2.1.0
+transformers>=4.38.0
+datasets>=2.16.0
+accelerate>=0.27.0
+evaluate>=0.4.0
+sacrebleu>=2.4.0
+sentencepiece>=0.2.0

@@ -35,16 +35,22 @@ Algerian-Arabic-dialect/
 │   │   ├── dialect_filter.py                # Darija vs MSA/French classification
 │   │   ├── script_detector.py               # Arabic vs Latin vs Mixed script detection
 │   │   └── text_cleaner.py                  # Deduplication, noise cleaning & length check
-│   └── scraper/
+│   ├── scraper/
+│   │   ├── __init__.py
+│   │   ├── run_scraper.py                   # Scraper CLI runner
+│   │   └── youtube_scraper.py               # yt-dlp backend for public comment extraction
+│   └── training/
 │       ├── __init__.py
-│       ├── run_scraper.py                   # Scraper CLI runner
-│       └── youtube_scraper.py               # yt-dlp backend for public comment extraction
+│       ├── dataset_loader.py                # Dataset loader & BCP-47 language tag mapper
+│       ├── train_nllb.py                    # NLLB-200 fine-tuning script
+│       └── evaluate.py                      # Translation evaluation & BLEU/chrF metrics
 ├── templates/
 │   └── crowdsourcing_batch.csv              # Spreadsheet template for translation passes
 ├── tests/
 │   ├── __init__.py
 │   └── test_filter.py                       # Unit tests for dialect validation & cleaning
-├── requirements.txt                         # Project dependencies
+├── requirements.txt                         # Lightweight scraper & filter dependencies
+├── requirements-train.txt                   # PyTorch & HuggingFace training dependencies
 ├── LICENSE                                  # CC-BY 4.0 (Data) / MIT (Code)
 └── README.md
 ```
@@ -54,11 +60,16 @@ Algerian-Arabic-dialect/
 ## Quick Start
 
 ### 1. Installation
-Clone the repository and install dependencies:
+Clone the repository and install core dependencies:
 ```bash
 git clone https://github.com/aminedrif/Algerian-Arabic-dialect.git
 cd Algerian-Arabic-dialect
 pip install -r requirements.txt
+```
+
+To enable the ML training pipeline:
+```bash
+pip install -r requirements-train.txt
 ```
 
 ### 2. Run Tests
@@ -76,6 +87,16 @@ python -m src.scraper.run_scraper --max-comments 50 --output data/raw/sample_raw
 Filter out pure MSA, pure French, short fragments (< 4 words), and duplicates:
 ```bash
 python -m src.pipeline --input data/raw/sample_raw_scraped.json --output data/cleaned/sample_cleaned_darija.json
+```
+
+### 5. Fine-Tune NLLB-200 Translation Model
+Once translation pairs are added to `templates/crowdsourcing_batch.csv`:
+```bash
+# Fine-tune NLLB-200 (Darija -> French)
+python -m src.training.train_nllb --data_file templates/crowdsourcing_batch.csv --target_lang french --epochs 5
+
+# Evaluate checkpoint on test sentences
+python -m src.training.evaluate --model_path models/nllb-darija-v1/final_model --test_file templates/crowdsourcing_batch.csv --target_lang french
 ```
 
 ---
