@@ -77,3 +77,14 @@ This project collects, cleans, and translates real Algerian Darija text to train
 ### Step 14: Fine-Tuning Whisper / MMS
 - Fine-tune OpenAI Whisper or Meta MMS on authentic Algerian speech.
 - Benchmark word error rate (WER) across regional accents and publish open weights.
+
+---
+
+## Target Benchmark Metrics
+
+| Model Task | Target Architecture | Primary Metric | Baseline Goal | Production Target |
+|:---|:---|:---|:---|:---|
+| Darija -> French MT | NLLB-200 (600M / 1.3B) | BLEU / chrF++ | > 22.0 BLEU | > 35.0 BLEU |
+| Darija -> English MT | NLLB-200 (600M / 1.3B) | BLEU / chrF++ | > 18.0 BLEU | > 30.0 BLEU |
+| Darija Speech-to-Text | Whisper-small / MMS | Word Error Rate (WER) | < 28% WER | < 15% WER |
+
